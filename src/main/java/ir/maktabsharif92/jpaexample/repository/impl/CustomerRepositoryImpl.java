@@ -6,8 +6,10 @@ import ir.maktabsharif92.jpaexample.dto.Page;
 import ir.maktabsharif92.jpaexample.dto.Pageable;
 import ir.maktabsharif92.jpaexample.repository.CustomerRepository;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.util.List;
 import java.util.Random;
 
 public class CustomerRepositoryImpl
@@ -21,6 +23,21 @@ public class CustomerRepositoryImpl
     @Override
     public Class<Customer> getEntityClass() {
         return Customer.class;
+    }
+
+    @Override
+    public List<Customer> findAll() {
+        EntityGraph<?> entityGraph = em.createEntityGraph(Customer.class);
+        entityGraph.addAttributeNodes("addresses");
+
+        TypedQuery<Customer> typedQuery = em.createQuery("select w from Customer w", getEntityClass());
+
+        typedQuery.setHint(
+                "javax.persistence.fetchgraph",
+                entityGraph
+        );
+
+        return typedQuery.getResultList();
     }
 
     @Override

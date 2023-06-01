@@ -32,7 +32,7 @@ public class Wallet extends BaseEntity<Long> {
     @Column(name = CREDIT_AMOUNT)
     private Long creditAmount = 0L;
 
-    @OneToOne(optional = false, fetch = FetchType.EAGER)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = CUSTOMER_FK)
     private Customer customer;
 

@@ -4,7 +4,9 @@ import ir.maktabsharif92.jpaexample.base.repository.impl.BaseEntityRepositoryImp
 import ir.maktabsharif92.jpaexample.domain.Wallet;
 import ir.maktabsharif92.jpaexample.repository.WalletRepository;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 public class WalletRepositoryImpl
@@ -22,9 +24,28 @@ public class WalletRepositoryImpl
 
     @Override
     public List<Wallet> findAll() {
+        return findAllWithEntityGraph();
+    }
+
+    private List<Wallet> findAllWithJoinFetch() {
         return em.createQuery(
                 "select w from Wallet w join fetch w.customer",
                 getEntityClass()
         ).getResultList();
+    }
+
+    private List<Wallet> findAllWithEntityGraph() {
+        EntityGraph<?> entityGraph = em.createEntityGraph(Wallet.class);
+        entityGraph.addAttributeNodes("customer");
+
+        TypedQuery<Wallet> typedQuery = em.createQuery("select w from Wallet w", getEntityClass());
+
+        typedQuery.setHint(
+                "javax.persistence.fetchgraph",
+                entityGraph
+        );
+
+        return typedQuery.getResultList();
+
     }
 }
