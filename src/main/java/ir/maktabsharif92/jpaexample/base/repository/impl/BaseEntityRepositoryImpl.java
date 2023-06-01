@@ -1,0 +1,139 @@
+package ir.maktabsharif92.jpaexample.base.repository.impl;
+
+import ir.maktabsharif92.jpaexample.base.domain.BaseEntity;
+import ir.maktabsharif92.jpaexample.base.repository.BaseEntityRepository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.TypedQuery;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+public abstract class BaseEntityRepositoryImpl<T extends BaseEntity<ID>, ID extends Serializable>
+        implements BaseEntityRepository<T, ID> {
+
+    private final EntityManager em;
+
+    public BaseEntityRepositoryImpl(EntityManager em) {
+        this.em = em;
+//        get entity class with type
+    }
+
+    @Override
+    public T save(T t) {
+        beginTransaction();
+        t = saveWithoutTransaction(t);
+        commitTransaction();
+        return t;
+    }
+
+    private T saveWithoutTransaction(T t) {
+        if (t.getId() == null) {
+            em.persist(t);
+        } else {
+//            em.merge(t);
+            t = em.merge(t);
+        }
+        return t;
+    }
+
+    @Override
+    public List<T> saveALl(Collection<T> tCollection) {
+        beginTransaction();
+        List<T> savedEntities = new ArrayList<>();
+        tCollection.forEach(
+                entity -> savedEntities.add(saveWithoutTransaction(entity))
+        );
+        commitTransaction();
+        return savedEntities;
+    }
+
+    @Override
+    public Optional<T> findById(ID id) {
+        return Optional.ofNullable(
+                em.find(
+                        getEntityClass(), id
+                )
+        );
+    }
+
+    @Override
+    public T getById(ID id) {
+        return em.find(
+                getEntityClass(), id
+        );
+    }
+
+    @Override
+    public void deleteById(ID id) {
+        beginTransaction();
+
+        em.remove(
+                findById(id).orElseThrow(
+                        () -> new RuntimeException("entity not found")
+                )
+        );
+
+        /*Query query = em.createQuery(
+                "delete from " + getEntityClass().getSimpleName() + " where id = :id"
+        );
+        query.setParameter("id", id);
+        query.executeUpdate();*/
+
+        commitTransaction();
+    }
+
+    @Override
+    public List<T> findAll() {
+//        criteria
+        return em.createQuery("from " + getEntityClass().getSimpleName(), getEntityClass())
+                .getResultList();
+    }
+
+    @Override
+    public boolean existsById(ID id) {
+        TypedQuery<Long> typedQuery = em.createQuery(
+                "select count(e) from " + getEntityClass().getSimpleName() + " e where e.id = :id",
+                Long.class
+        );
+        typedQuery.setParameter("id", id);
+        return typedQuery.getSingleResult() > 0;
+    }
+
+    @Override
+    public long count() {
+        return em.createQuery(
+                "select count(e) from " + getEntityClass().getSimpleName() + " e",
+                Long.class
+        ).getSingleResult();
+    }
+
+    @Override
+    public void beginTransaction() {
+        EntityTransaction transaction = em.getTransaction();
+        if (!transaction.isActive()) {
+            transaction.begin();
+        }
+    }
+
+    @Override
+    public void commitTransaction() {
+        EntityTransaction transaction = em.getTransaction();
+        if (transaction.isActive()) {
+            transaction.commit();
+        }
+    }
+
+    @Override
+    public void rollbackTransaction() {
+        EntityTransaction transaction = em.getTransaction();
+        if (transaction.isActive()) {
+            transaction.rollback();
+        }
+    }
+
+    public abstract Class<T> getEntityClass();
+}
