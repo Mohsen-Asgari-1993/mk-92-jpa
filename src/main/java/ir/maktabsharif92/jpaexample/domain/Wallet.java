@@ -21,18 +21,22 @@ public class Wallet extends BaseEntity<Long> {
     public static final String TOTAL_AMOUNT = "total_amount";
     public static final String CASH_AMOUNT = "cash_amount";
     public static final String CREDIT_AMOUNT = "credit_amount";
-    public static final String CUSTOMER_FK = "c_username";
+    public static final String CUSTOMER_FK = "customer_id";
 
     @Column(name = TOTAL_AMOUNT)
-    private Long totalAmount;
+    private Long totalAmount = 0L;
 
     @Column(name = CASH_AMOUNT)
-    private Long cashAmount;
+    private Long cashAmount = 0L;
 
     @Column(name = CREDIT_AMOUNT)
-    private Long creditAmount;
+    private Long creditAmount = 0L;
 
     @OneToOne(optional = false)
-    @JoinColumn(name = CUSTOMER_FK, referencedColumnName = Customer.USER_NAME)
+    @JoinColumn(name = CUSTOMER_FK)
     private Customer customer;
+
+    public Wallet(Customer customer) {
+        this.customer = customer;
+    }
 }

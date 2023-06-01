@@ -1,6 +1,7 @@
 package ir.maktabsharif92.jpaexample;
 
 import ir.maktabsharif92.jpaexample.domain.Customer;
+import ir.maktabsharif92.jpaexample.domain.Wallet;
 import ir.maktabsharif92.jpaexample.service.CustomerService;
 import ir.maktabsharif92.jpaexample.util.ApplicationContext;
 
@@ -13,7 +14,15 @@ public class JpaApplication {
         CustomerService customerService = ApplicationContext.getCustomerService();
 
         List<Customer> customers = customerService.findAll();
-        System.out.println(customers);
+
+        Customer customer = customers.get(0);
+
+        ApplicationContext.getWalletService().save(
+                new Wallet(
+                        customer
+                )
+        );
+
 
     }
 }
