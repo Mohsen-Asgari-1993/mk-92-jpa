@@ -37,7 +37,7 @@ public class ApplicationContext {
     public static CustomerService getCustomerService() {
         if (customerService == null) {
             customerService = new CustomerServiceImpl(
-                    getCustomerRepository()
+                    getCustomerRepository(), getWalletService()
             );
         }
         return customerService;

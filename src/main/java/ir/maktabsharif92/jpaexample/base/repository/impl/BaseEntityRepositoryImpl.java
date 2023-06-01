@@ -2,6 +2,7 @@ package ir.maktabsharif92.jpaexample.base.repository.impl;
 
 import ir.maktabsharif92.jpaexample.base.domain.BaseEntity;
 import ir.maktabsharif92.jpaexample.base.repository.BaseEntityRepository;
+import ir.maktabsharif92.jpaexample.util.CustomEntityTransaction;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -15,7 +16,9 @@ import java.util.Optional;
 public abstract class BaseEntityRepositoryImpl<T extends BaseEntity<ID>, ID extends Serializable>
         implements BaseEntityRepository<T, ID> {
 
-    private final EntityManager em;
+    protected final EntityManager em;
+
+    private CustomEntityTransaction entityTransaction;
 
     public BaseEntityRepositoryImpl(EntityManager em) {
         this.em = em;
@@ -24,9 +27,9 @@ public abstract class BaseEntityRepositoryImpl<T extends BaseEntity<ID>, ID exte
 
     @Override
     public T save(T t) {
-        beginTransaction();
+        beginTransaction(true);
         t = saveWithoutTransaction(t);
-        commitTransaction();
+        customCommitTransaction();
         return t;
     }
 
@@ -120,6 +123,17 @@ public abstract class BaseEntityRepositoryImpl<T extends BaseEntity<ID>, ID exte
     }
 
     @Override
+    public void beginTransaction(boolean commit) {
+        EntityTransaction transaction = em.getTransaction();
+        if (!transaction.isActive()) {
+            this.entityTransaction = new CustomEntityTransaction(
+                    transaction, commit
+            );
+            transaction.begin();
+        }
+    }
+
+    @Override
     public void commitTransaction() {
         EntityTransaction transaction = em.getTransaction();
         if (transaction.isActive()) {
@@ -128,10 +142,30 @@ public abstract class BaseEntityRepositoryImpl<T extends BaseEntity<ID>, ID exte
     }
 
     @Override
+    public void customCommitTransaction() {
+        if (this.entityTransaction != null && this.entityTransaction.isCommit()) {
+            this.entityTransaction.getEntityTransaction().commit();
+        }
+    }
+
+    @Override
+    public void changeCommitStatus(boolean commit) {
+        this.entityTransaction.setCommit(commit);
+    }
+
+    @Override
     public void rollbackTransaction() {
         EntityTransaction transaction = em.getTransaction();
         if (transaction.isActive()) {
             transaction.rollback();
+        }
+    }
+
+    @Override
+    public void customRollbackTransaction() {
+        if (this.entityTransaction != null && this.entityTransaction.getEntityTransaction().isActive()) {
+            this.entityTransaction.getEntityTransaction().rollback();
+            this.entityTransaction = null;
         }
     }
 

@@ -11,7 +11,7 @@ import java.util.Optional;
 public class BaseEntityServiceImpl<T extends BaseEntity<ID>, ID extends Serializable, R extends BaseEntityRepository<T, ID>>
         implements BaseEntityService<T, ID> {
 
-    private final R repository;
+    protected final R repository;
 
     public BaseEntityServiceImpl(R repository) {
         this.repository = repository;
@@ -20,12 +20,12 @@ public class BaseEntityServiceImpl<T extends BaseEntity<ID>, ID extends Serializ
     @Override
     public T save(T t) {
         try {
-            repository.beginTransaction();
+            repository.beginTransaction(true);
             t = repository.save(t);
-            repository.commitTransaction();
+            repository.customCommitTransaction();
             return t;
         } catch (Exception e) {
-            repository.rollbackTransaction();
+            repository.customRollbackTransaction();
             throw e;
         }
     }

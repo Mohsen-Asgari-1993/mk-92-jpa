@@ -27,9 +27,16 @@ public interface BaseEntityRepository<T extends BaseEntity<ID>, ID extends Seria
 
     void beginTransaction();
 
+    void beginTransaction(boolean commit);
+
     void commitTransaction();
+
+    void customCommitTransaction();
+
+    void changeCommitStatus(boolean commit);
 
     void rollbackTransaction();
 
 
+    void customRollbackTransaction();
 }
