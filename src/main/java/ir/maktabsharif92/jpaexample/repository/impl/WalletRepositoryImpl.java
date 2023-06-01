@@ -1,11 +1,13 @@
 package ir.maktabsharif92.jpaexample.repository.impl;
 
 import ir.maktabsharif92.jpaexample.base.repository.impl.BaseEntityRepositoryImpl;
+import ir.maktabsharif92.jpaexample.domain.Customer;
 import ir.maktabsharif92.jpaexample.domain.Wallet;
 import ir.maktabsharif92.jpaexample.repository.WalletRepository;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
+import javax.persistence.Subgraph;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
@@ -37,6 +39,8 @@ public class WalletRepositoryImpl
     private List<Wallet> findAllWithEntityGraph() {
         EntityGraph<?> entityGraph = em.createEntityGraph(Wallet.class);
         entityGraph.addAttributeNodes("customer");
+        Subgraph<Customer> customerSub = entityGraph.addSubgraph("customer", Customer.class);
+        customerSub.addAttributeNodes("addresses");
 
         TypedQuery<Wallet> typedQuery = em.createQuery("select w from Wallet w", getEntityClass());
 
