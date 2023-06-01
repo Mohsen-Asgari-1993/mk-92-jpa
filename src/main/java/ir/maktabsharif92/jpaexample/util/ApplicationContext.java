@@ -3,7 +3,7 @@ package ir.maktabsharif92.jpaexample.util;
 import ir.maktabsharif92.jpaexample.repository.CustomerRepository;
 import ir.maktabsharif92.jpaexample.repository.impl.CustomerRepositoryImpl;
 import ir.maktabsharif92.jpaexample.service.CustomerService;
-import ir.maktabsharif92.jpaexample.service.CustomerServiceImpl;
+import ir.maktabsharif92.jpaexample.service.impl.CustomerServiceImpl;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
