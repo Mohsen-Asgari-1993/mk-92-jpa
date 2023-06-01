@@ -5,6 +5,7 @@ import ir.maktabsharif92.jpaexample.domain.Wallet;
 import ir.maktabsharif92.jpaexample.repository.WalletRepository;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 public class WalletRepositoryImpl
         extends BaseEntityRepositoryImpl<Wallet, Long>
@@ -17,5 +18,13 @@ public class WalletRepositoryImpl
     @Override
     public Class<Wallet> getEntityClass() {
         return Wallet.class;
+    }
+
+    @Override
+    public List<Wallet> findAll() {
+        return em.createQuery(
+                "select w from Wallet w join fetch w.customer",
+                getEntityClass()
+        ).getResultList();
     }
 }

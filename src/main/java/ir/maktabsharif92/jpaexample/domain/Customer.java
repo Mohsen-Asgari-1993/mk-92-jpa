@@ -9,6 +9,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = Customer.TABLE_NAME)
@@ -27,6 +29,7 @@ public class Customer extends BaseEntity<Long> {
     public static final String CREATE_DATE = "CREATE_DATE";
     public static final String IS_ACTIVE = "is_active";
     public static final String CUSTOMER_TYPE = "customer_type";
+    public static final String CUSTOMER_ID = "customer_id";
 
     @Column(name = FIRST_NAME)
     private String firstName;
@@ -49,6 +52,10 @@ public class Customer extends BaseEntity<Long> {
     @Column(name = CUSTOMER_TYPE)
     @Enumerated(EnumType.STRING)
     private CustomerType customerType;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = CUSTOMER_ID)
+    private Set<Address> addresses = new HashSet<>();
 
     @Override
     public String toString() {

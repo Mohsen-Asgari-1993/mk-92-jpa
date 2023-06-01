@@ -1,12 +1,10 @@
 package ir.maktabsharif92.jpaexample;
 
 import com.github.javafaker.Faker;
-import ir.maktabsharif92.jpaexample.dto.CustomerDashboardInfo;
-import ir.maktabsharif92.jpaexample.service.CustomerService;
+import ir.maktabsharif92.jpaexample.domain.Customer;
 import ir.maktabsharif92.jpaexample.util.ApplicationContext;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+import java.util.List;
 
 public class JpaApplication {
 
@@ -15,18 +13,19 @@ public class JpaApplication {
 
     public static void main(String[] args) {
 
-        CustomerService customerService = ApplicationContext.getCustomerService();
+        /*WalletService walletService = ApplicationContext.getWalletService();
+        List<Wallet> wallets = walletService.findAll();
 
-        System.out.println("start: " + LocalDateTime.now());
-        long startMilli = ZonedDateTime.now().toInstant().toEpochMilli();
-        CustomerDashboardInfo dashboardInfo = customerService.getDashboardInfo();
-        System.out.println(
-                dashboardInfo
-        );
-        long endMilli = ZonedDateTime.now().toInstant().toEpochMilli();
-        System.out.println("end " + LocalDateTime.now());
-        System.out.println(endMilli - startMilli);
+        wallets.forEach(
+                wallet -> System.out.println(
+                        wallet.getCustomer().getFirstName() + " " + wallet.getCustomer().getLastName()
+//                        wallet.getTotalAmount()
+                )
+        );*/
+
+        List<Customer> all = ApplicationContext.getCustomerService().findAll();
 
     }
+
 
 }
