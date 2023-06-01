@@ -1,6 +1,8 @@
 package ir.maktabsharif92.jpaexample.base.repository;
 
 import ir.maktabsharif92.jpaexample.base.domain.BaseEntity;
+import ir.maktabsharif92.jpaexample.dto.Page;
+import ir.maktabsharif92.jpaexample.dto.Pageable;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -21,6 +23,8 @@ public interface BaseEntityRepository<T extends BaseEntity<ID>, ID extends Seria
 
     List<T> findAll();
 
+    Page<T> findAll(Pageable pageable);
+
     boolean existsById(ID id);
 
     long count();
@@ -36,7 +40,6 @@ public interface BaseEntityRepository<T extends BaseEntity<ID>, ID extends Seria
     void changeCommitStatus(boolean commit);
 
     void rollbackTransaction();
-
 
     void customRollbackTransaction();
 }

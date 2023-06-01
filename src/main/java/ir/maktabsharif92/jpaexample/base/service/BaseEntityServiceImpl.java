@@ -2,6 +2,8 @@ package ir.maktabsharif92.jpaexample.base.service;
 
 import ir.maktabsharif92.jpaexample.base.domain.BaseEntity;
 import ir.maktabsharif92.jpaexample.base.repository.BaseEntityRepository;
+import ir.maktabsharif92.jpaexample.dto.Page;
+import ir.maktabsharif92.jpaexample.dto.Pageable;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -63,6 +65,11 @@ public class BaseEntityServiceImpl<T extends BaseEntity<ID>, ID extends Serializ
     @Override
     public List<T> findAll() {
         return repository.findAll();
+    }
+
+    @Override
+    public Page<T> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @Override

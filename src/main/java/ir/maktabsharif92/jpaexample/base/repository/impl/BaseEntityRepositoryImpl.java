@@ -2,6 +2,8 @@ package ir.maktabsharif92.jpaexample.base.repository.impl;
 
 import ir.maktabsharif92.jpaexample.base.domain.BaseEntity;
 import ir.maktabsharif92.jpaexample.base.repository.BaseEntityRepository;
+import ir.maktabsharif92.jpaexample.dto.Page;
+import ir.maktabsharif92.jpaexample.dto.Pageable;
 import ir.maktabsharif92.jpaexample.util.CustomEntityTransaction;
 
 import javax.persistence.EntityManager;
@@ -94,6 +96,28 @@ public abstract class BaseEntityRepositoryImpl<T extends BaseEntity<ID>, ID exte
 //        criteria
         return em.createQuery("from " + getEntityClass().getSimpleName(), getEntityClass())
                 .getResultList();
+    }
+
+    @Override
+    public Page<T> findAll(Pageable pageable) {
+        TypedQuery<T> typedQuery = em
+                .createQuery(
+                        "from " + getEntityClass().getSimpleName(),
+                        getEntityClass()
+                );
+        typedQuery.setMaxResults(
+                pageable.getSize()
+        );
+
+//         offset
+//                                0                   10
+//                                1                   10
+        int firstResult = pageable.getPage() * pageable.getSize();
+        typedQuery.setFirstResult(firstResult);
+        List<T> content = typedQuery.getResultList();
+        return new Page<>(
+                content, count()
+        );
     }
 
     @Override

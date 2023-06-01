@@ -2,6 +2,8 @@ package ir.maktabsharif92.jpaexample;
 
 import com.github.javafaker.Faker;
 import ir.maktabsharif92.jpaexample.domain.Customer;
+import ir.maktabsharif92.jpaexample.dto.Page;
+import ir.maktabsharif92.jpaexample.dto.Pageable;
 import ir.maktabsharif92.jpaexample.service.CustomerService;
 import ir.maktabsharif92.jpaexample.util.ApplicationContext;
 
@@ -16,9 +18,49 @@ public class JpaApplication {
 
         CustomerService customerService = ApplicationContext.getCustomerService();
 
-        Customer save = customerService.save(
-                getNewCustomer()
+        /*System.out.println(
+                "count: " + customerService.count()
         );
+        System.out.println();
+
+        System.out.println(
+                "count findAll: " + customerService.findAll().size()
+        );
+        System.out.println();
+
+        Page<Customer> page = customerService.findAll(
+                new Pageable(10, 0)
+        );
+
+        long totalElements = page.getTotalElements();
+        System.out.println(
+                "totalElements: " + totalElements
+        );
+        System.out.println(
+                "page 0: "
+        );
+        page.getContent().forEach(System.out::println);
+        System.out.println("-------------");
+
+
+        System.out.println(
+                "page 1: "
+        );
+
+        customerService.findAll(
+                new Pageable(10, 1)
+        ).getContent().forEach(System.out::println);*/
+
+        System.out.println();
+        Page<Customer> firstNamePage = customerService
+                .findAllByFirstNameContaining(
+                        "e",
+                        new Pageable(10, 5)
+                );
+        System.out.println(
+                "page by firstName total elements: " + firstNamePage.getTotalElements()
+        );
+        firstNamePage.getContent().forEach(System.out::println);
 
     }
 

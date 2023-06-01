@@ -1,6 +1,8 @@
 package ir.maktabsharif92.jpaexample.base.service;
 
 import ir.maktabsharif92.jpaexample.base.domain.BaseEntity;
+import ir.maktabsharif92.jpaexample.dto.Page;
+import ir.maktabsharif92.jpaexample.dto.Pageable;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -20,6 +22,8 @@ public interface BaseEntityService<T extends BaseEntity<ID>, ID extends Serializ
     void deleteById(ID id);
 
     List<T> findAll();
+
+    Page<T> findAll(Pageable pageable);
 
     boolean existsById(ID id);
 
