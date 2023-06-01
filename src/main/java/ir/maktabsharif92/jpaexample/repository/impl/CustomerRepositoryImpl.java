@@ -8,6 +8,7 @@ import ir.maktabsharif92.jpaexample.repository.CustomerRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.util.Random;
 
 public class CustomerRepositoryImpl
         extends BaseEntityRepositoryImpl<Customer, Long>
@@ -48,8 +49,9 @@ public class CustomerRepositoryImpl
     @Override
     public long countAllActive() {
         try {
-//            Thread.sleep( new Random().nextInt(4000));
-            Thread.sleep(2000);
+            int waitTime = new Random().nextInt(5000);
+            System.out.println("countAllActive waitTime: " + waitTime);
+            Thread.sleep(waitTime);
         } catch (Exception ignore) {
         }
         return countAllBy(
@@ -60,8 +62,9 @@ public class CustomerRepositoryImpl
     @Override
     public long countAllDeActive() {
         try {
-//            Thread.sleep( new Random().nextInt(4000));
-            Thread.sleep(2000);
+            int waitTime = new Random().nextInt(5000);
+            System.out.println("countAllDeActive waitTime: " + waitTime);
+            Thread.sleep(waitTime);
         } catch (Exception ignore) {
         }
         return countAllBy(
@@ -72,8 +75,9 @@ public class CustomerRepositoryImpl
     @Override
     public long countAllLegalActive() {
         try {
-//            Thread.sleep( new Random().nextInt(4000));
-            Thread.sleep(2000);
+            int waitTime = new Random().nextInt(5000);
+            System.out.println("countAllLegalActive waitTime: " + waitTime);
+            Thread.sleep(waitTime);
         } catch (Exception ignore) {
         }
         return countAllBy(
@@ -84,8 +88,9 @@ public class CustomerRepositoryImpl
     @Override
     public long countAllRealActive() {
         try {
-//            Thread.sleep( new Random().nextInt(4000));
-            Thread.sleep(2000);
+            int waitTime = new Random().nextInt(5000);
+            System.out.println("countAllRealActive waitTime: " + waitTime);
+            Thread.sleep(waitTime);
         } catch (Exception ignore) {
         }
         return countAllBy(

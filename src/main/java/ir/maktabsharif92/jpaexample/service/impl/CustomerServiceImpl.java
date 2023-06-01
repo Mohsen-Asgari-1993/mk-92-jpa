@@ -10,6 +10,13 @@ import ir.maktabsharif92.jpaexample.repository.CustomerRepository;
 import ir.maktabsharif92.jpaexample.service.CustomerService;
 import ir.maktabsharif92.jpaexample.service.WalletService;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+
 public class CustomerServiceImpl
         extends BaseEntityServiceImpl<Customer, Long, CustomerRepository>
         implements CustomerService {
@@ -53,11 +60,46 @@ public class CustomerServiceImpl
 
     @Override
     public CustomerDashboardInfo getDashboardInfo() {
-        return new CustomerDashboardInfo(
-                repository.countAllActive(),
-                repository.countAllDeActive(),
-                repository.countAllLegalActive(),
-                repository.countAllRealActive()
+        CustomerDashboardInfo info = new CustomerDashboardInfo();
+
+        ExecutorService executorService = Executors.newFixedThreadPool(4);
+
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+//        add futures
+        futures.add(
+                CompletableFuture.supplyAsync(
+                        repository::countAllActive, executorService
+                ).thenAccept(info::setActiveCustomers)
         );
+
+        futures.add(
+                CompletableFuture.supplyAsync(
+                        repository::countAllDeActive, executorService
+                ).thenAccept(info::setDeActiveCustomers)
+        );
+        futures.add(
+                CompletableFuture.supplyAsync(
+                        repository::countAllLegalActive, executorService
+                ).thenAccept(info::setLegalCustomers)
+        );
+        futures.add(
+                CompletableFuture.supplyAsync(
+                        repository::countAllRealActive, executorService
+                ).thenAccept(info::setRealCustomers)
+        );
+
+        futures.stream().map(CompletableFuture::join)
+                .collect(Collectors.toSet());
+
+        executorService.shutdown();
+
+        return info;
+//        return new CustomerDashboardInfo(
+//                repository.countAllActive(),
+//                repository.countAllDeActive(),
+//                repository.countAllLegalActive(),
+//                repository.countAllRealActive()
+//        );
     }
 }
