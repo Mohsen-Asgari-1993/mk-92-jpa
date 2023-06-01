@@ -42,5 +42,15 @@ public class Customer extends BaseEntity<Long> {
     @Column(name = CREATE_DATE)
     private ZonedDateTime createDate;
 
-
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id='" + getId() + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", createDate=" + createDate +
+                '}';
+    }
 }

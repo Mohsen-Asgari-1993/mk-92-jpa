@@ -1,4 +1,4 @@
-package ir.maktabsharif92.jpaexample;
+package ir.maktabsharif92.jpaexample.util;
 
 import ir.maktabsharif92.jpaexample.repository.CustomerRepository;
 import ir.maktabsharif92.jpaexample.repository.impl.CustomerRepositoryImpl;
