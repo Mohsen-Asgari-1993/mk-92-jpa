@@ -1,14 +1,13 @@
 package ir.maktabsharif92.jpaexample.domain;
 
 import ir.maktabsharif92.jpaexample.base.domain.BaseEntity;
+import ir.maktabsharif92.jpaexample.domain.enumeration.CustomerType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -26,6 +25,8 @@ public class Customer extends BaseEntity<Long> {
     public static final String USER_NAME = "USER_NAME";
     public static final String PASSWORD = "PASSWORD";
     public static final String CREATE_DATE = "CREATE_DATE";
+    public static final String IS_ACTIVE = "is_active";
+    public static final String CUSTOMER_TYPE = "customer_type";
 
     @Column(name = FIRST_NAME)
     private String firstName;
@@ -41,6 +42,13 @@ public class Customer extends BaseEntity<Long> {
 
     @Column(name = CREATE_DATE)
     private ZonedDateTime createDate;
+
+    @Column(name = IS_ACTIVE)
+    private Boolean isActive;
+
+    @Column(name = CUSTOMER_TYPE)
+    @Enumerated(EnumType.STRING)
+    private CustomerType customerType;
 
     @Override
     public String toString() {

@@ -44,4 +44,56 @@ public class CustomerRepositoryImpl
                 ).setParameter("firstName", "%" + firstName + "%").getSingleResult()
         );
     }
+
+    @Override
+    public long countAllActive() {
+        try {
+//            Thread.sleep( new Random().nextInt(4000));
+            Thread.sleep(2000);
+        } catch (Exception ignore) {
+        }
+        return countAllBy(
+                "select count(c) from Customer c where c.isActive = true"
+        );
+    }
+
+    @Override
+    public long countAllDeActive() {
+        try {
+//            Thread.sleep( new Random().nextInt(4000));
+            Thread.sleep(2000);
+        } catch (Exception ignore) {
+        }
+        return countAllBy(
+                "select count(c) from Customer c where c.isActive = false"
+        );
+    }
+
+    @Override
+    public long countAllLegalActive() {
+        try {
+//            Thread.sleep( new Random().nextInt(4000));
+            Thread.sleep(2000);
+        } catch (Exception ignore) {
+        }
+        return countAllBy(
+                "select count(c) from Customer c where c.customerType = 'LEGAL'"
+        );
+    }
+
+    @Override
+    public long countAllRealActive() {
+        try {
+//            Thread.sleep( new Random().nextInt(4000));
+            Thread.sleep(2000);
+        } catch (Exception ignore) {
+        }
+        return countAllBy(
+                "select count(c) from Customer c where c.customerType = 'REAL'"
+        );
+    }
+
+    private long countAllBy(String query) {
+        return em.createQuery(query, Long.class).getSingleResult();
+    }
 }

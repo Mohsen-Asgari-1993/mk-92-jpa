@@ -3,6 +3,7 @@ package ir.maktabsharif92.jpaexample.service.impl;
 import ir.maktabsharif92.jpaexample.base.service.BaseEntityServiceImpl;
 import ir.maktabsharif92.jpaexample.domain.Customer;
 import ir.maktabsharif92.jpaexample.domain.Wallet;
+import ir.maktabsharif92.jpaexample.dto.CustomerDashboardInfo;
 import ir.maktabsharif92.jpaexample.dto.Page;
 import ir.maktabsharif92.jpaexample.dto.Pageable;
 import ir.maktabsharif92.jpaexample.repository.CustomerRepository;
@@ -22,20 +23,25 @@ public class CustomerServiceImpl
 
     @Override
     public Customer save(Customer customer) {
-        try {
-            repository.beginTransaction(false);
-            customer = repository.save(customer);
-            walletService.save(
-                    new Wallet(
-                            customer
-                    )
-            );
-            repository.changeCommitStatus(true);
-            repository.customCommitTransaction();
-            return customer;
-        } catch (Exception e) {
-            repository.customRollbackTransaction();
-            throw e;
+
+        if (customer.getId() == null) {
+            try {
+                repository.beginTransaction(false);
+                customer = repository.save(customer);
+                walletService.save(
+                        new Wallet(
+                                customer
+                        )
+                );
+                repository.changeCommitStatus(true);
+                repository.customCommitTransaction();
+                return customer;
+            } catch (Exception e) {
+                repository.customRollbackTransaction();
+                throw e;
+            }
+        } else {
+            return repository.save(customer);
         }
 
     }
@@ -43,5 +49,15 @@ public class CustomerServiceImpl
     @Override
     public Page<Customer> findAllByFirstNameContaining(String firstName, Pageable pageable) {
         return repository.findAllByFirstNameContaining(firstName, pageable);
+    }
+
+    @Override
+    public CustomerDashboardInfo getDashboardInfo() {
+        return new CustomerDashboardInfo(
+                repository.countAllActive(),
+                repository.countAllDeActive(),
+                repository.countAllLegalActive(),
+                repository.countAllRealActive()
+        );
     }
 }

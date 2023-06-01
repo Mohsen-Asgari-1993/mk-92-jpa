@@ -10,4 +10,12 @@ public interface CustomerRepository
 
     Page<Customer> findAllByFirstNameContaining(String firstName, Pageable pageable);
 
+    long countAllActive();
+
+    long countAllDeActive();
+
+    long countAllLegalActive();
+
+    long countAllRealActive();
+
 }
