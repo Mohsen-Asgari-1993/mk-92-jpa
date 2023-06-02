@@ -2,6 +2,7 @@ package ir.maktabsharif92.jpaexample.repository.impl;
 
 import ir.maktabsharif92.jpaexample.base.repository.impl.BaseEntityRepositoryImpl;
 import ir.maktabsharif92.jpaexample.domain.Customer;
+import ir.maktabsharif92.jpaexample.dto.CustomerSearch;
 import ir.maktabsharif92.jpaexample.dto.Page;
 import ir.maktabsharif92.jpaexample.dto.Pageable;
 import ir.maktabsharif92.jpaexample.repository.CustomerRepository;
@@ -173,6 +174,12 @@ public class CustomerRepositoryImpl
         return countAllBy(
                 "select count(c) from Customer c where c.customerType = 'REAL'"
         );
+    }
+
+    @Override
+    public List<Customer> findAllWithSearch(CustomerSearch customerSearch) {
+//        TODO complete this
+        return null;
     }
 
     private long countAllBy(String query) {

@@ -4,6 +4,7 @@ import ir.maktabsharif92.jpaexample.base.service.BaseEntityServiceImpl;
 import ir.maktabsharif92.jpaexample.domain.Customer;
 import ir.maktabsharif92.jpaexample.domain.Wallet;
 import ir.maktabsharif92.jpaexample.dto.CustomerDashboardInfo;
+import ir.maktabsharif92.jpaexample.dto.CustomerSearch;
 import ir.maktabsharif92.jpaexample.dto.Page;
 import ir.maktabsharif92.jpaexample.dto.Pageable;
 import ir.maktabsharif92.jpaexample.repository.CustomerRepository;
@@ -101,5 +102,10 @@ public class CustomerServiceImpl
 //                repository.countAllLegalActive(),
 //                repository.countAllRealActive()
 //        );
+    }
+
+    @Override
+    public List<Customer> findAllWithSearch(CustomerSearch customerSearch) {
+        return repository.findAllWithSearch(customerSearch);
     }
 }
