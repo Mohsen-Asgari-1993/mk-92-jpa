@@ -31,7 +31,7 @@ public class JpaApplication {
 
     }
 
-    private void initCustomers() {
+    private static void initCustomers() {
         IntStream.range(0, 100)
                 .forEach(i -> {
                             ApplicationContext.getCustomerService().save(
