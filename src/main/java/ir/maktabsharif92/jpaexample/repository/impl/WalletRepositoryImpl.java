@@ -46,6 +46,7 @@ public class WalletRepositoryImpl
 
         typedQuery.setHint(
                 "javax.persistence.fetchgraph",
+//                "javax.persistence.loadgraph",
                 entityGraph
         );
 
