@@ -100,6 +100,10 @@ public abstract class BaseEntityRepositoryImpl<T extends BaseEntity<ID>, ID exte
 
     @Override
     public Page<T> findAll(Pageable pageable) {
+        return getPageFirstApproach(pageable);
+    }
+
+    private Page<T> getPageFirstApproach(Pageable pageable) {
         TypedQuery<T> typedQuery = em
                 .createQuery(
                         "from " + getEntityClass().getSimpleName(),
@@ -122,6 +126,10 @@ public abstract class BaseEntityRepositoryImpl<T extends BaseEntity<ID>, ID exte
 
     @Override
     public boolean existsById(ID id) {
+        return existsByIdFirstApproach(id);
+    }
+
+    private boolean existsByIdFirstApproach(ID id) {
         TypedQuery<Long> typedQuery = em.createQuery(
                 "select count(e) from " + getEntityClass().getSimpleName() + " e where e.id = :id",
                 Long.class
@@ -132,6 +140,10 @@ public abstract class BaseEntityRepositoryImpl<T extends BaseEntity<ID>, ID exte
 
     @Override
     public long count() {
+        return countFirstApproach();
+    }
+
+    private Long countFirstApproach() {
         return em.createQuery(
                 "select count(e) from " + getEntityClass().getSimpleName() + " e",
                 Long.class
