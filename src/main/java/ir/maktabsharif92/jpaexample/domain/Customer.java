@@ -2,10 +2,7 @@ package ir.maktabsharif92.jpaexample.domain;
 
 import ir.maktabsharif92.jpaexample.base.domain.BaseEntity;
 import ir.maktabsharif92.jpaexample.domain.enumeration.CustomerType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -18,6 +15,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Customer extends BaseEntity<Long> {
 
     public static final String TABLE_NAME = "base_user";
