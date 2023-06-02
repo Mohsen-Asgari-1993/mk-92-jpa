@@ -13,6 +13,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,9 +27,26 @@ public abstract class BaseEntityRepositoryImpl<T extends BaseEntity<ID>, ID exte
 
     private CustomEntityTransaction entityTransaction;
 
+    private Class<T> entityClass;
+
+    private Class<ID> idClass;
+
     public BaseEntityRepositoryImpl(EntityManager em) {
         this.em = em;
 //        get entity class with type
+        Type genericSuperclass = getClass().getGenericSuperclass();
+        if (genericSuperclass instanceof ParameterizedType) {
+            ParameterizedType superclass = (ParameterizedType) genericSuperclass;
+            Type[] actualTypeArguments = superclass.getActualTypeArguments();
+            if (actualTypeArguments != null && actualTypeArguments.length > 1) {
+                if (actualTypeArguments[0] instanceof Class) {
+                    this.entityClass = (Class<T>) actualTypeArguments[0];
+                }
+                if (actualTypeArguments[1] instanceof Class) {
+                    this.idClass = (Class<ID>) actualTypeArguments[1];
+                }
+            }
+        }
     }
 
     @Override

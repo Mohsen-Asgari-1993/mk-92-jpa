@@ -3,10 +3,11 @@ package ir.maktabsharif92.jpaexample;
 import com.github.javafaker.Faker;
 import ir.maktabsharif92.jpaexample.domain.Customer;
 import ir.maktabsharif92.jpaexample.domain.enumeration.CustomerType;
+import ir.maktabsharif92.jpaexample.repository.CustomerRepository;
+import ir.maktabsharif92.jpaexample.repository.WalletRepository;
 import ir.maktabsharif92.jpaexample.util.ApplicationContext;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -17,21 +18,8 @@ public class JpaApplication {
 
     public static void main(String[] args) {
 
-        List<Customer> all = ApplicationContext.getCustomerService().findAll();
-
-        System.out.println(all.size());
-
-        System.out.println(
-                ApplicationContext.getCustomerService().count()
-        );
-
-        System.out.println(
-                "exists 888: " + ApplicationContext.getCustomerService().existsById(888L)
-        );
-
-        System.out.println(
-                "exists 196: " + ApplicationContext.getCustomerService().existsById(196L)
-        );
+        CustomerRepository customerRepository = ApplicationContext.getCustomerRepository();
+        WalletRepository walletRepository = ApplicationContext.getWalletRepository();
 
 
     }
