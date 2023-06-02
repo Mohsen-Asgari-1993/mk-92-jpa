@@ -26,7 +26,7 @@ public class WalletRepositoryImpl
 
     @Override
     public List<Wallet> findAll() {
-        return findAllWithEntityGraph();
+        return findAllWithGetEntityGraph();
     }
 
     private List<Wallet> findAllWithJoinFetch() {
@@ -36,11 +36,28 @@ public class WalletRepositoryImpl
         ).getResultList();
     }
 
-    private List<Wallet> findAllWithEntityGraph() {
+    private List<Wallet> findAllWithCreateEntityGraph() {
         EntityGraph<?> entityGraph = em.createEntityGraph(Wallet.class);
         entityGraph.addAttributeNodes("customer");
         Subgraph<Customer> customerSub = entityGraph.addSubgraph("customer", Customer.class);
         customerSub.addAttributeNodes("addresses");
+
+        TypedQuery<Wallet> typedQuery = em.createQuery("select w from Wallet w", getEntityClass());
+
+        typedQuery.setHint(
+                "javax.persistence.fetchgraph",
+//                "javax.persistence.loadgraph",
+                entityGraph
+        );
+
+        return typedQuery.getResultList();
+
+    }
+
+    private List<Wallet> findAllWithGetEntityGraph() {
+        EntityGraph<?> entityGraph = em.getEntityGraph(
+                Wallet.WALLET_FULL_GRAPH
+        );
 
         TypedQuery<Wallet> typedQuery = em.createQuery("select w from Wallet w", getEntityClass());
 
