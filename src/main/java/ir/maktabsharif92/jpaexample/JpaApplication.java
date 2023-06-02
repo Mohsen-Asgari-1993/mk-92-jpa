@@ -3,7 +3,6 @@ package ir.maktabsharif92.jpaexample;
 import com.github.javafaker.Faker;
 import ir.maktabsharif92.jpaexample.domain.Customer;
 import ir.maktabsharif92.jpaexample.domain.enumeration.CustomerType;
-import ir.maktabsharif92.jpaexample.dto.CustomerSearch;
 import ir.maktabsharif92.jpaexample.util.ApplicationContext;
 
 import java.time.ZonedDateTime;
@@ -18,26 +17,21 @@ public class JpaApplication {
 
     public static void main(String[] args) {
 
-//        List<Customer> all = ApplicationContext.getCustomerService().findAll();
-        List<Customer> customers = ApplicationContext.getCustomerService().findAllWithSearch(
-                CustomerSearch.builder()
-                        .firstName("on")
-                        .lastName("e")
-                        .isActive(true)
-                        .build()
+        List<Customer> all = ApplicationContext.getCustomerService().findAll();
+
+        System.out.println(all.size());
+
+        System.out.println(
+                ApplicationContext.getCustomerService().count()
         );
 
         System.out.println(
-                ApplicationContext.getCustomerService().findAllFirstNames(
-                        CustomerSearch.builder()
-                                .firstName("on")
-                                .lastName("e")
-                                .isActive(true)
-                                .build()
-                )
+                "exists 888: " + ApplicationContext.getCustomerService().existsById(888L)
         );
 
-        System.out.println(customers.size());
+        System.out.println(
+                "exists 196: " + ApplicationContext.getCustomerService().existsById(196L)
+        );
 
 
     }

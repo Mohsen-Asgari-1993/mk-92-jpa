@@ -9,6 +9,9 @@ import ir.maktabsharif92.jpaexample.util.CustomEntityTransaction;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,13 +97,39 @@ public abstract class BaseEntityRepositoryImpl<T extends BaseEntity<ID>, ID exte
     @Override
     public List<T> findAll() {
 //        criteria
-        return em.createQuery("from " + getEntityClass().getSimpleName(), getEntityClass())
-                .getResultList();
+
+//        select e from #entity#
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+//        CriteriaQuery<T> query = cb.createQuery(T.class);
+        CriteriaQuery<T> query = cb.createQuery(getEntityClass());
+        Root<T> root = query.from(getEntityClass());
+        query.select(root);
+        return em.createQuery(query).getResultList();
+
+//        return em.createQuery("from " + getEntityClass().getSimpleName(), getEntityClass())
+//                .getResultList();
     }
 
     @Override
     public Page<T> findAll(Pageable pageable) {
-        return getPageFirstApproach(pageable);
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<T> query = cb.createQuery(getEntityClass());
+        Root<T> root = query.from(getEntityClass());
+        query.select(root);
+        TypedQuery<T> typedQuery = em.createQuery(query);
+        typedQuery.setMaxResults(
+                pageable.getSize()
+        );
+        typedQuery.setFirstResult(
+                pageable.getPage() * pageable.getSize()
+        );
+        List<T> content = typedQuery.getResultList();
+        return new Page<>(
+                content, count()
+        );
+
+
     }
 
     private Page<T> getPageFirstApproach(Pageable pageable) {
@@ -126,7 +155,24 @@ public abstract class BaseEntityRepositoryImpl<T extends BaseEntity<ID>, ID exte
 
     @Override
     public boolean existsById(ID id) {
-        return existsByIdFirstApproach(id);
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+
+        Root<T> root = query.from(getEntityClass());
+
+        query.select(
+                cb.count(root)
+        );
+        query.where(
+                cb.equal(
+                        root.get("id"), id
+                )
+        );
+
+        return em.createQuery(query).getSingleResult() > 0;
+
     }
 
     private boolean existsByIdFirstApproach(ID id) {
@@ -140,7 +186,18 @@ public abstract class BaseEntityRepositoryImpl<T extends BaseEntity<ID>, ID exte
 
     @Override
     public long count() {
-        return countFirstApproach();
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+
+        Root<T> root = query.from(getEntityClass());
+
+        query.select(
+                cb.count(root)
+        );
+
+        return em.createQuery(query).getSingleResult();
     }
 
     private Long countFirstApproach() {

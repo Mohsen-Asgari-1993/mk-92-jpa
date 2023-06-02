@@ -189,7 +189,8 @@ public class CustomerRepositoryImpl
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
 //        select c from Customer c   -> cb.createQuery(Customer.class)
-//        select c.id from Customer c   -> cb.createQuery(Long.class)
+//                  cb.createQuery(Long.class)       query.from(Customer.class)
+//        select    c.id                        from Customer c   -> cb.createQuery(Long.class)
 //        select c.firstName from Customer c   -> cb.createQuery(String.class)
 //        select c.id from Long c   -> cb.createQuery(String.class)
         CriteriaQuery<Customer> query = cb.createQuery(Customer.class);
