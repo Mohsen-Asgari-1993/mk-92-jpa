@@ -22,4 +22,6 @@ public interface CustomerRepository
     long countAllRealActive();
 
     List<Customer> findAllWithSearch(CustomerSearch customerSearch);
+
+    List<String> findAllFirstNames(CustomerSearch customerSearch);
 }

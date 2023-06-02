@@ -27,6 +27,16 @@ public class JpaApplication {
                         .build()
         );
 
+        System.out.println(
+                ApplicationContext.getCustomerService().findAllFirstNames(
+                        CustomerSearch.builder()
+                                .firstName("on")
+                                .lastName("e")
+                                .isActive(true)
+                                .build()
+                )
+        );
+
         System.out.println(customers.size());
 
 

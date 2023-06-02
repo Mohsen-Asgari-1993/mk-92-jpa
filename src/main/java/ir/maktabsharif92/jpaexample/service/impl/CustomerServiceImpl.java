@@ -108,4 +108,9 @@ public class CustomerServiceImpl
     public List<Customer> findAllWithSearch(CustomerSearch customerSearch) {
         return repository.findAllWithSearch(customerSearch);
     }
+
+    @Override
+    public List<String> findAllFirstNames(CustomerSearch customerSearch) {
+        return repository.findAllFirstNames(customerSearch);
+    }
 }

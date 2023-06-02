@@ -194,7 +194,52 @@ public class CustomerRepositoryImpl
 //        select c.id from Long c   -> cb.createQuery(String.class)
         CriteriaQuery<Customer> query = cb.createQuery(Customer.class);
         Root<Customer> customerRoot = query.from(Customer.class);
-//        query.select(customerRoot);
+        query.select(customerRoot);
+        List<Predicate> predicates = new ArrayList<>();
+        addFirstNamePredicate(
+                predicates, cb, customerRoot, customerSearch.getFirstName()
+        );
+        addLastNamePredicate(
+                predicates, cb, customerRoot, customerSearch.getLastName()
+        );
+        addUsernamePredicate(
+                predicates, cb, customerRoot, customerSearch.getUsername()
+        );
+        fillFromCreateDatePredicate(
+                predicates, cb, customerRoot, customerSearch.getFromCreateDate()
+        );
+        fillToCreateDatePredicate(
+                predicates, cb, customerRoot, customerSearch.getToCreateDate()
+        );
+        fillIsActivePredicate(
+                predicates, cb, customerRoot, customerSearch.getIsActive()
+        );
+        fillCustomerTypePredicate(
+                predicates, cb, customerRoot, customerSearch.getCustomerType()
+        );
+
+        query.where(
+                cb.and(
+                        predicates.toArray(
+                                new Predicate[0]
+                        )
+                )
+        );
+
+        return em.createQuery(query).getResultList();
+    }
+
+    @Override
+    public List<String> findAllFirstNames(CustomerSearch customerSearch) {
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+//        select c from Customer c   -> cb.createQuery(Customer.class)
+//        select c.id from Customer c   -> cb.createQuery(Long.class)
+//        select c.firstName from Customer c   -> cb.createQuery(String.class)
+//        select c.id from Long c   -> cb.createQuery(String.class)
+        CriteriaQuery<String> query = cb.createQuery(String.class);
+        Root<Customer> customerRoot = query.from(Customer.class);
+        query.select(customerRoot.get("firstName"));
         List<Predicate> predicates = new ArrayList<>();
         addFirstNamePredicate(
                 predicates, cb, customerRoot, customerSearch.getFirstName()

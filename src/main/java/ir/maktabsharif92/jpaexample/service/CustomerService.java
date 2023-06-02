@@ -17,4 +17,5 @@ public interface CustomerService extends BaseEntityService<Customer, Long> {
 
     List<Customer> findAllWithSearch(CustomerSearch customerSearch);
 
+    List<String> findAllFirstNames(CustomerSearch customerSearch);
 }
