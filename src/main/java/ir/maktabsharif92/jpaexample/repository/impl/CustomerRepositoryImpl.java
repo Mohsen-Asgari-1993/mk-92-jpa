@@ -41,6 +41,66 @@ public class CustomerRepositoryImpl
     }
 
     @Override
+    public Page<Customer> findAll(Pageable pageable) {
+
+        return getCustomerPageWithoutFirstResultMaxResultWarning(pageable);
+    }
+
+    private Page<Customer> getCustomerPageWithFirstResultMaxResultWarning(Pageable pageable) {
+        TypedQuery<Customer> typedQuery = em
+                .createQuery(
+                        "from " + getEntityClass().getSimpleName(),
+                        getEntityClass()
+                );
+        typedQuery.setMaxResults(
+                pageable.getSize()
+        );
+
+        int firstResult = pageable.getPage() * pageable.getSize();
+        typedQuery.setFirstResult(firstResult);
+
+        EntityGraph<?> entityGraph = em.createEntityGraph(Customer.class);
+        entityGraph.addAttributeNodes("addresses");
+        typedQuery.setHint(
+                "javax.persistence.fetchgraph",
+                entityGraph
+        );
+
+        List<Customer> content = typedQuery.getResultList();
+        return new Page<>(
+                content, count()
+        );
+    }
+
+    private Page<Customer> getCustomerPageWithoutFirstResultMaxResultWarning(Pageable pageable) {
+        TypedQuery<Long> typedQuery = em.createQuery(
+                "select c.id from Customer c", Long.class
+        );
+        typedQuery.setMaxResults(
+                pageable.getSize()
+        );
+        int firstResult = pageable.getPage() * pageable.getSize();
+        typedQuery.setFirstResult(firstResult);
+        List<Long> customerIds = typedQuery.getResultList();
+        TypedQuery<Customer> customerQuery = em.createQuery(
+                "select c from Customer c where c.id in :ids",
+                getEntityClass()
+        );
+        customerQuery.setParameter("ids", customerIds);
+        EntityGraph<?> entityGraph = em.createEntityGraph(Customer.class);
+        entityGraph.addAttributeNodes("addresses");
+        customerQuery.setHint(
+                "javax.persistence.fetchgraph",
+                entityGraph
+        );
+
+        return new Page<>(
+                customerQuery.getResultList(), count()
+        );
+
+    }
+
+    @Override
     public Page<Customer> findAllByFirstNameContaining(String firstName, Pageable pageable) {
         String fromClause = "from Customer c where c.firstName like :firstName";
         String query = "select c " + fromClause;

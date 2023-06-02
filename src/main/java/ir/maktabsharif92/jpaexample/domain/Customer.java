@@ -53,7 +53,7 @@ public class Customer extends BaseEntity<Long> {
     @Enumerated(EnumType.STRING)
     private CustomerType customerType;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = CUSTOMER_ID)
     private Set<Address> addresses = new HashSet<>();
 
