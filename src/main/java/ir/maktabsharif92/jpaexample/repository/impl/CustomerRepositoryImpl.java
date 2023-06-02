@@ -2,14 +2,22 @@ package ir.maktabsharif92.jpaexample.repository.impl;
 
 import ir.maktabsharif92.jpaexample.base.repository.impl.BaseEntityRepositoryImpl;
 import ir.maktabsharif92.jpaexample.domain.Customer;
+import ir.maktabsharif92.jpaexample.domain.enumeration.CustomerType;
 import ir.maktabsharif92.jpaexample.dto.CustomerSearch;
 import ir.maktabsharif92.jpaexample.dto.Page;
 import ir.maktabsharif92.jpaexample.dto.Pageable;
 import ir.maktabsharif92.jpaexample.repository.CustomerRepository;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -178,8 +186,137 @@ public class CustomerRepositoryImpl
 
     @Override
     public List<Customer> findAllWithSearch(CustomerSearch customerSearch) {
-//        TODO complete this
-        return null;
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+//        select c from Customer c   -> cb.createQuery(Customer.class)
+//        select c.id from Customer c   -> cb.createQuery(Long.class)
+//        select c.firstName from Customer c   -> cb.createQuery(String.class)
+//        select c.id from Long c   -> cb.createQuery(String.class)
+        CriteriaQuery<Customer> query = cb.createQuery(Customer.class);
+        Root<Customer> customerRoot = query.from(Customer.class);
+//        query.select(customerRoot);
+        List<Predicate> predicates = new ArrayList<>();
+        addFirstNamePredicate(
+                predicates, cb, customerRoot, customerSearch.getFirstName()
+        );
+        addLastNamePredicate(
+                predicates, cb, customerRoot, customerSearch.getLastName()
+        );
+        addUsernamePredicate(
+                predicates, cb, customerRoot, customerSearch.getUsername()
+        );
+        fillFromCreateDatePredicate(
+                predicates, cb, customerRoot, customerSearch.getFromCreateDate()
+        );
+        fillToCreateDatePredicate(
+                predicates, cb, customerRoot, customerSearch.getToCreateDate()
+        );
+        fillIsActivePredicate(
+                predicates, cb, customerRoot, customerSearch.getIsActive()
+        );
+        fillCustomerTypePredicate(
+                predicates, cb, customerRoot, customerSearch.getCustomerType()
+        );
+
+        query.where(
+                cb.and(
+                        predicates.toArray(
+                                new Predicate[0]
+                        )
+                )
+        );
+
+        return em.createQuery(query).getResultList();
+    }
+
+    private void addFirstNamePredicate(List<Predicate> predicates, CriteriaBuilder cb,
+                                       Root<Customer> root, String firstName) {
+//        if (firstName != null && !firstName.isEmpty()) {
+        if (StringUtils.isNotBlank(firstName)) {
+//                 1       2    3
+//            c.firstName like ''
+//            c.isActive like ''
+//            c.username like ''
+            addLikePredicate(predicates, cb, root, firstName, "firstName");
+        }
+    }
+
+    private void addLastNamePredicate(List<Predicate> predicates, CriteriaBuilder cb,
+                                      Root<Customer> root, String lastName) {
+        if (StringUtils.isNotBlank(lastName)) {
+            addLikePredicate(predicates, cb, root, lastName, "lastName");
+        }
+    }
+
+    private void addUsernamePredicate(List<Predicate> predicates, CriteriaBuilder cb,
+                                      Root<Customer> root, String username) {
+        if (StringUtils.isNotBlank(username)) {
+            addLikePredicate(predicates, cb, root, username, "username");
+        }
+    }
+
+    private void fillFromCreateDatePredicate(List<Predicate> predicates, CriteriaBuilder cb,
+                                             Root<Customer> customerRoot, ZonedDateTime fromCreateDate) {
+        if (fromCreateDate != null) {
+            predicates.add(
+                    cb.greaterThanOrEqualTo(
+                            customerRoot.get("createDate"), fromCreateDate
+                    )
+            );
+        }
+    }
+
+    private void fillToCreateDatePredicate(List<Predicate> predicates, CriteriaBuilder cb,
+                                           Root<Customer> customerRoot, ZonedDateTime toCreateDate) {
+        if (toCreateDate != null) {
+            predicates.add(
+                    cb.lessThanOrEqualTo(
+                            customerRoot.get("createDate"), toCreateDate
+                    )
+            );
+        }
+    }
+
+    private void fillIsActivePredicate(List<Predicate> predicates, CriteriaBuilder cb,
+                                       Root<Customer> customerRoot, Boolean isActive) {
+        if (isActive != null) {
+            Predicate predicate;
+            if (isActive) {
+                predicate = cb.isTrue(
+                        customerRoot.get("isActive")
+                );
+            } else {
+                predicate = cb.or(
+                        cb.isFalse(
+                                customerRoot.get("isActive")
+                        ),
+                        cb.isNull(
+                                customerRoot.get("isActive")
+                        )
+                );
+            }
+            predicates.add(predicate);
+        }
+    }
+
+    private void fillCustomerTypePredicate(List<Predicate> predicates, CriteriaBuilder cb,
+                                           Root<Customer> customerRoot, CustomerType customerType) {
+        if (customerType != null) {
+            predicates.add(
+                    cb.equal(
+                            customerRoot.get("customerType"), customerType
+                    )
+            );
+        }
+    }
+
+    private void addLikePredicate(List<Predicate> predicates, CriteriaBuilder cb, Root<Customer> root,
+                                  String fieldValue, String fieldName) {
+        predicates.add(
+                cb.like(
+                        root.get(fieldName), "%" + fieldValue + "%"
+                )
+        );
     }
 
     private long countAllBy(String query) {
